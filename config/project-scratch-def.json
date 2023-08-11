@@ -1,0 +1,19 @@
+{
+	"orgName": "SForce Techies",
+	"edition": "Enterprise",
+	"features": ["EnableSetPasswordInApi", "Communities", "ServiceCloud", "ServiceUser"],
+	"settings": {
+		"communitiesSettings": {
+			"enableNetworksEnabled": true
+		},
+		"lightningExperienceSettings": {
+			"enableS1DesktopEnabled": true
+		},
+		"mobileSettings": {
+			"enableS1EncryptedStoragePref2": false
+		},
+		"omniChannelSettings": {
+			"enableOmniChannel": true
+		}
+	}
+}
