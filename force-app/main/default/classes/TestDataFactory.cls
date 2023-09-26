@@ -7,104 +7,107 @@ public with sharing class TestDataFactory {
 	 * @name ConstructCollaborationGroup
 	 * @description
 	 **/
-	public static CollaborationGroup constructCollaborationGroup() {
+	public static CollaborationGroup ConstructCollaborationGroup() {
 		//ToDo: Ensure this method returns a single Chatter CollaborationGroup
 		//    whose Name starts with 'TEST' followed by the INVENTORY_ANNOUNCEMENTS constant
 		//    and configured so anyone can join, see and post updates.
-		CollaborationGroup testCollaborationGroup = new CollaborationGroup(
+		CollaborationGroup chatterGroup = new CollaborationGroup(
 			Name = 'TEST' + Constants.INVENTORY_ANNOUNCEMENTS,
 			CollaborationType = 'Public'
 		);
-		return testCollaborationGroup;
+		return chatterGroup;
 	}
 
 	/**
 	 * @name CreateProducts
 	 * @description Constructs a list of Product2 records for unit tests
 	 **/
-	public static List<Product2> constructProducts(Integer cnt) {
+	public static List<Product2> ConstructProducts(Integer cnt) {
 		//ToDo: Ensure this method returns a list, of size cnt, of uniquely named Product2 records
 		//  with all the required fields populated
 		//  and IsActive = true
 		//  an Initial Inventory set to 10
 		//  and iterating through the product family picklist values throughout the list.
-		List<Product2> testProductList = new List<Product2>();
-		for (Integer i = 0; i < cnt; i++) {
-			Product2 testProduct = new Product2(
-				Name = 'testProduct' + i,
-				IsActive = true,
+		List<Product2> products = new List<Product2>();
+		for (Integer i = 1; i <= cnt; i++) {
+			Product2 prod = new Product2(
+				Name = 'Product' + i,
 				Initial_Inventory__c = 10,
-				Family = Constants.PRODUCT_FAMILY.get(math.mod(i, 4)).getValue()
+				isActive = true,
+				family = Constants.PRODUCT_FAMILY.get(math.mod(i, 4)).getValue()
 			);
-			testProductList.add(testProduct);
+			products.add(prod);
 		}
-		return testProductList;
-	}
 
-	// System.debug('testProductList ' + TestDataFactory.ConstructProducts(5));
+		return products;
+	}
 
 	/**
 	 * @name CreatePricebookEntries
 	 * @description Constructs a list of PricebookEntry records for unit tests
 	 **/
-	public static List<PricebookEntry> constructPricebookEntries(List<Product2> prods) {
+	public static List<PriceBookEntry> ConstructPricebookEntries(List<Product2> prods) {
 		//ToDo: Ensure this method returns a corresponding list of PricebookEntries records
 		//  related to the provided Products
 		//  with all the required fields populated
 		//  and IsActive = true
 		//  and belonging to the standard Pricebook
-		// Get standard price book ID.
-		// This is available irrespective of the state of SeeAllData.
-		List<PricebookEntry> testPricebookEntries = new List<PricebookEntry>();
-		for (Product2 product : prods) {
-			PricebookEntry testPricebookEntry = new PricebookEntry(
-				Pricebook2Id = Test.isRunningTest() ? Test.getStandardPricebookId() : Constants.STANDARD_PRICEBOOK_ID,
-				Product2Id = product.Id,
-				UnitPrice = prods.indexOf(product) == 0 ? 9 * 100 : prods.indexOf(product) * 100,
-				IsActive = true
-			);
-			testPricebookEntries.add(testPricebookEntry);
-		}
-		return testPricebookEntries;
-	}
 
-	// System.debug('testPricebookEntries ' + TestDataFactory.constructPricebookEntries(TestDataFactory.ConstructProducts(10)));
+		List<PriceBookEntry> entries = new List<PriceBookEntry>();
+		for (Product2 prod : prods) {
+			PriceBookEntry entry = new PriceBookEntry();
+			entry.Pricebook2Id = Constants.STANDARD_PRICEBOOK_ID;
+			entry.Product2Id = prod.Id;
+			entry.UnitPrice = 100;
+			entry.IsActive = true;
+			entries.add(entry);
+		}
+
+		return entries;
+	}
 
 	/**
 	 * @name CreateAccounts
 	 * @description Constructs a list of Account records for unit tests
 	 **/
-	public static List<Account> constructAccounts(Integer cnt) {
+	public static List<Account> ConstructAccounts(Integer cnt) {
 		//ToDo: Ensure this method returns a list of size cnt of uniquely named Account records
 		//  with all of the required fields populated.
-		List<Account> testAccounts = new List<Account>();
+		List<Account> accounts = new List<Account>();
 		for (Integer i = 0; i < cnt; i++) {
-			testAccounts.add(new Account(Name = 'Test Account' + i));
+			Account acc = new Account(name = 'Account' + i);
+			accounts.add(acc);
 		}
-		return testAccounts;
+		System.debug('account size' + accounts.size());
+		return accounts;
 	}
 
 	/**
 	 * @name CreateContacts
 	 * @description Constructs a list of Contacxt records for unit tests
 	 **/
-	public static List<Contact> constructContacts(Integer cnt, List<Account> accts) {
+	public static List<Contact> ConstructContacts(Integer cnt, List<Account> accts) {
 		//ToDo: Ensure this method returns a list, of size cnt, of uniquely named Contact records
 		//  related to the provided Accounts
 		//  with all of the required fields populated.
-		List<Contact> testContacts = new List<Contact>();
+		List<Contact> contacts = new List<Contact>();
 		for (Integer i = 0; i < cnt; i++) {
-			Integer accountIndex = Math.mod(i, accts.size());
-			testContacts.add(new Contact(LastName = 'TestContact' + i, AccountId = accts.get(accountIndex).Id));
+			Integer index = Math.mod(i, accts.size());
+			Contact con = new Contact();
+			con.LastName = 'TestContact' + i;
+			con.AccountId = accts.get(index).Id;
+			contacts.add(con);
 		}
-		return testContacts;
+		System.debug('contacts size' + contacts.size());
+		System.debug('accts size' + accts.size());
+		return contacts;
 	}
 
 	/**
 	 * @name CreateOrders
 	 * @description Constructs a list of Order records for unit tests
 	 **/
-	public static List<Order> constructOrders(Integer cnt, List<Account> accts) {
+	public static List<Order> ConstructOrders(Integer cnt, List<Account> accts) {
 		//ToDo: Ensure this method returns a list of size cnt of uniquely named Order records
 		//  related to the provided Accounts
 		//  with all of the required fields populated.
@@ -124,7 +127,7 @@ public with sharing class TestDataFactory {
 	 * @name CreateOrderItems
 	 * @description Constructs a list of OrderItem records for unit tests
 	 **/
-	public static list<OrderItem> constructOrderItems(integer cnt, list<pricebookentry> pbes, list<order> ords) {
+	public static List<OrderItem> ConstructOrderItems(integer cnt, list<pricebookentry> pbes, list<order> ords) {
 		//ToDo: Ensure this method returns a list of size cnt of OrderItem records
 		//  related to the provided Pricebook Entries
 		//  and related to the provided Orders
@@ -147,34 +150,32 @@ public with sharing class TestDataFactory {
 	 * @name SetupTestData
 	 * @description Inserts accounts, contacts, Products, PricebookEntries, Orders, and OrderItems.
 	 **/
-	public static void insertTestData(Integer cnt) {
+	public static void InsertTestData(Integer cnt) {
 		//ToDo: Ensure this method calls each of the construct methods
 		//  and inserts the results for use as test data.
-		//ToDo: Ensure this method calls each of the construct methods
-		//  and inserts the results for use as test data.
-		CollaborationGroup groups = constructCollaborationGroup();
+		CollaborationGroup groups = TestDataFactory.ConstructCollaborationGroup();
 		insert groups;
 
-		List<Product2> products = constructProducts(cnt);
+		List<Product2> products = TestDataFactory.ConstructProducts(cnt);
 		insert products;
 
-		List<PriceBookEntry> entries = constructPricebookEntries(products);
+		List<PriceBookEntry> entries = TestDataFactory.ConstructPricebookEntries(products);
 		insert entries;
 
-		List<Account> accts = constructAccounts(cnt);
+		List<Account> accts = TestDataFactory.ConstructAccounts(cnt);
 		insert accts;
 
-		List<Contact> contacts = constructContacts(cnt, accts);
+		List<Contact> contacts = TestDataFactory.ConstructContacts(cnt, accts);
 		insert contacts;
 
-		List<Order> orders = constructOrders(cnt, accts);
+		List<Order> orders = TestDataFactory.ConstructOrders(cnt, accts);
 		insert orders;
 
-		List<OrderItem> items = constructOrderItems(cnt, entries, orders);
+		List<OrderItem> items = TestDataFactory.ConstructOrderItems(cnt, entries, orders);
 		insert items;
 	}
 
-	public static void verifyQuantityOrdered(Product2 originalProduct, Product2 updatedProduct, Integer qtyOrdered) {
-		system.AssertEquals(updatedProduct.Quantity_Ordered__c, originalProduct.Quantity_Ordered__c + qtyOrdered);
+	public static void VerifyQuantityOrdered(Product2 originalProduct, Product2 updatedProduct, Integer qtyOrdered) {
+		System.assertEquals((updatedProduct.Quantity_Ordered__c - originalProduct.Quantity_Ordered__c), qtyOrdered);
 	}
 }
