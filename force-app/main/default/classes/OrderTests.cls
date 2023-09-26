@@ -1,42 +1,25 @@
-@IsTest
+@isTest
 private class OrderTests {
-	@TestSetup
-	static void setupTestData() {
-		TestDataFactory.insertTestData(5);
+	@testSetup
+	static void SetupTestData() {
+		TestDataFactory.InsertTestData(20);
 	}
 
 	@IsTest
 	static void OrderUpdate_UnitTest() {
-		test.startTest();
+		Order selectedOrder = [SELECT name, Status, Id FROM Order LIMIT 1];
+		Product2 oldProd = [SELECT Quantity_Ordered__c, Name, Id FROM Product2 LIMIT 1];
 
-		Order order = [SELECT Id, Status FROM Order LIMIT 1];
+		selectedOrder.Status = Constants.ACTIVATED_ORDER_STATUS;
+		update selectedOrder;
 
-		Product2 prod = [
-			SELECT Family, Id, Name, Quantity_Ordered__c, Quantity_Remaining__c
-			FROM Product2
-			WHERE Name = 'testProduct0'
-			LIMIT 1
-		];
+		Product2 updatedProd = [SELECT Quantity_Ordered__c, Name, Id FROM Product2 LIMIT 1];
 
-		order.status = constants.ACTIVATED_ORDER_STATUS;
-
-		update order;
-
-		Product2 updatedProd = [
-			SELECT Family, Id, Name, Quantity_Ordered__c, Quantity_Remaining__c
-			FROM Product2
-			WHERE Name = 'testProduct0'
-			LIMIT 1
-		];
-
-		TestDataFactory.VerifyQuantityOrdered(prod, updatedprod, constants.DEFAULT_ROWS);
-
-		Test.stopTest();
+		TestDataFactory.VerifyQuantityOrdered(oldProd, updatedProd, Constants.DEFAULT_ROWS);
 	}
 
 	@IsTest
-	static void testOrderExtension() {
-		Test.startTest();
+	static void OrderExtension_UnitTest() {
 		PageReference reference = Page.OrderEdit;
 		Test.setCurrentPage(reference);
 		Order CurOrder = [SELECT Id, Status FROM Order LIMIT 1];
@@ -57,6 +40,5 @@ private class OrderTests {
 		extension.GetFamilyOptions();
 		extension.Save();
 		ChartHelper.GetInventory();
-		Test.stopTest();
 	}
 }
